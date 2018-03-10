@@ -50,7 +50,7 @@ namespace BirrUp
             return false;
         }
 
-        private void SQL_Query(string query) {
+        private DataTable SQL_Query(string query) {
             var connection = checkBox1.Checked ? new SqlConnection("Data Source=DESKTOP-BH2UN3B\\SQLEXPRESS;Integrated Security=True") : new SqlConnection("Data Source=192.168.0.16;Initial Catalog=BirrUp;User ID=sa;Password=BirrUp-root;");
 
             try
@@ -72,12 +72,14 @@ namespace BirrUp
                             table.Load(command.ExecuteReader());
                         }
 
-                        dataGridView1.DataSource = table;
+                        connection.Close();
 
                         label1.Text = "Query done";
                         label1.ForeColor = Color.LawnGreen;
 
-                        connection.Close();
+                        return table;
+
+                        //dataGridView1.DataSource = table;
                     }
                 }
                 else
@@ -115,13 +117,17 @@ namespace BirrUp
             {
                 connection.Close();
             }
+            return null;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            button1.Text = Rand.Next(255).ToString();
+            // Table to store the query results
+            DataTable table_query = new DataTable();
 
-            SQL_Query("SELECT id,type FROM Birras");
+            table_query = SQL_Query("SELECT id,type FROM Birras");
+
+            dataGridView1.DataSource = table_query;
         }
 
         private void button2_Click(object sender, EventArgs e)
